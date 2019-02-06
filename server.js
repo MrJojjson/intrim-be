@@ -1,103 +1,67 @@
-const express = require('express');
-const app = express();
-const port = 8081;
+var express = require('express');
+var mongoose = require('mongoose');
+var bodyParser = require('body-parser');
+const logger = require("morgan");
+const Data = require("./data");
 
-const mongo = require('mongodb').MongoClient;
-const url = 'mongodb://localhost:27017';
+var app = express();
+const router = express.Router();
 
-// connect to client
-mongo.connect(url, (err, client) => {
-  if (err) {
-    console.error(err)
-    return
+var portnum = 8081;
+
+//Import the mongoose module
+//Set up default mongoose connection
+var mongoDB = 'mongodb://<user>:<password>@ds125125.mlab.com:25125/intrim';
+mongoose.connect(mongoDB);
+// Get Mongoose to use the global promise library
+mongoose.Promise = global.Promise;
+//Get the default connection
+var db = mongoose.connection;
+
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once("open", () => console.log("connected to the database"));
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(__dirname));
+app.use(bodyParser.json())
+app.use(logger("dev"));
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+router.get("/getData", (req, res) => {
+  Data.find((err, data) => {
+    if (err) return res.json({ success: false, error: err });
+    return res.json({ success: true, data: data });
+  });
+});
+
+router.post("/putData", (req, res) => {
+  let data = new Data();
+  const { id, message } = req.body;
+
+  if ((!id && id !== 0) || !message) {
+    return res.json({
+      success: false,
+      error: "INVALID INPUTS"
+    });
   }
-  //...
-})
-// or
-mongo.connect(url)
-.then(client => {
-    console.log(client)
-  })
-  .catch(err => {
-  console.error(err)
-  })
+  data.message = message;
+  data.id = id;
+  data.save(err => {
+    if (err) return res.json({ success: false, error: err });
+    return res.json({ success: true });
+  });
+});
 
-// select a database
-const db = client.db('kennel');
+app.use("/api", router);
 
-// get a collection (if null it will be created)
-const collection = db.collection('dogs');
-
-// insert single item
-collection.insertOne({name: 'Roger'})
-.then(item => {
-    console.log(item)
-  })
-  .catch(err => {
-  console.error(err)
-  })
-
-// insert multiple items
-collection.insertMany([{name: 'Togo'}, {name: 'Syd'}])
-.then(item => {
-    console.log(item)
-  })
-  .catch(err => {
-  console.error(err)
-  })
-
-// find all documents
-collection.find()
-  .then(item => {
-    console.log(item)
-  })
-  .catch(err => {
-  console.error(err)
-  })
-
-// find specific documents
-collection.find({name: 'Togo'}).toArray({name: 'Togo'})
-  .then(item => {
-    console.log(item)
-  })
-  .catch(err => {
-  console.error(err)
-  })
-// or
-collection.findOne({name: 'Togo'})
-  .then(item => {
-    console.log(item)
-  })
-  .catch(err => {
-  console.error(err)
-  })
-
-// update a specific document
-collection.updateOne({name: 'Togo'}, {'$set': {'name': 'Togo2'}})
-.then(item => {
-    console.log(item)
-  })
-  .catch(err => {
-  console.error(err)
-  })
-
-// delete a specific document
-collection.deleteOne({name: 'Togo'})
-.then(item => {
-    console.log(item)
-  })
-  .catch(err => {
-  console.error(err)
-  })
-
-// close the connection
-client.close()
-
-
-app.get('/', (req, res) => (
-    res.send('Hello World!')
-));
-
-app.listen(port, () => (
-    console.log(`Example app listening on port ${port}!`)
-));
+// Start the REST service
+var server = app.listen(portnum, () => {
+    var host = server.address().address;
+    var port = server.address().port;
+    console.log("Content Provider Service listening at http://%s:%s", host, port);
+});
