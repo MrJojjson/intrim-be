@@ -1,3 +1,7 @@
+const express = require('express');
+const app = express();
+const port = 8081;
+
 const mongo = require('mongodb').MongoClient;
 const url = 'mongodb://localhost:27017';
 
@@ -88,3 +92,12 @@ collection.deleteOne({name: 'Togo'})
 
 // close the connection
 client.close()
+
+
+app.get('/', (req, res) => (
+    res.send('Hello World!')
+));
+
+app.listen(port, () => (
+    console.log(`Example app listening on port ${port}!`)
+));
