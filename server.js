@@ -2,15 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const logger = require("morgan");
-const session = require('express-session')
-
-const post = require('./setters/post');
-const get = require('./getters/get');
-const login = require('./helpers/login');
+const session = require('express-session');
 
 const app = express();
 const router = express.Router();
 const portnum = 8081;
+const targetBaseUrl = 'http://localhost:8080/api';
 
 const env = process.env.NODE_ENV || 'dev';
 
@@ -37,20 +34,40 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+  // res.header("Access-Control-Allow-Origin", "*");
+  var allowedOrigins = [
+    'http://127.0.0.1:8081',
+    'http://localhost:8080',
+    'http://localhost:8080/registration',
+    'http://localhost:8080/profile',
+    'http://localhost:8080/api/profile',
+    'http://localhost:8080/api/registration',
+    'http://127.0.0.1:8081/api/loginUser'
+  ];
+
+  var origin = req.headers.origin;
+  console.log('origin', origin);
+  if(allowedOrigins.indexOf(origin) > -1){
+       res.header('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header('Access-Control-Allow-Credentials', true);
+
+  
+  return next();
 });
 
-router.post("/newUser", login.requireLogin, (req, res) => {
-  return post.user(req, res);
-});
-
-router.get("/getData", (req, res) => {
-  return get.data(res);
-});
-
+require('./routers')(router);
 app.use("/api", router);
+
+handleRedirect = (req, res) => {
+  const targetUrl = targetBaseUrl + req.originalUrl;
+  console.log('targetUrl', targetUrl)
+  return res.redirect(targetUrl);
+}
+
+app.get('*', handleRedirect);
 
 var server = app.listen(portnum, () => {
     var host = server.address().address;

@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-  id: Number,
   firstName: {
     type: String,
     required: true,
@@ -24,11 +23,6 @@ const UserSchema = new Schema({
     required: true,
     unique: false
   },
-  organisation: {
-    type: String,
-    required: true,
-    unique: false
-  },
   password: {
     type: String,
     required: true,
@@ -37,9 +31,21 @@ const UserSchema = new Schema({
   { timestamps: true }
 );
 
+UserSchema.pre('save', function (next) {
+  var user = this;
+  bcrypt.hash(user.password, 10, function (err, hash){
+    if (err) {
+      return next(err);
+    }
+    user.password = hash;
+    console.log('HASHED PASS => ', user.password);
+    return next();
+  })
+});
+
 //authenticate input against database
 UserSchema.statics.authenticate = function (email, password, callback) {
-  User.findOne({ email })
+  User.findOne({ email: email })
     .exec(function (err, user) {
       if (err) {
         return callback(err)
@@ -58,19 +64,5 @@ UserSchema.statics.authenticate = function (email, password, callback) {
     });
 }
 
-UserSchema.pre('save', function (next) {
-  var user = this;
-  console.log('user', user)
-  bcrypt.hash(user.password, 10, function (err, hash){
-    if (err) {
-      return next(err);
-    }
-    user.password = hash;
-
-    console.log('user 1', user)
-    next();
-  })
-});
-
-// export the new Schema so we could modify it using Node.js
-module.exports = mongoose.model("User", UserSchema);
+const User = mongoose.model('User', UserSchema);
+module.exports = User;

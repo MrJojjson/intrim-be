@@ -1,14 +1,16 @@
-const Data = require("../models/data");
+const User = require("../models/user");
 
-data = res => {
-  return Data.find((err, data) => {
-    if (err) {
-      return res.json({ success: false, error: err });
-    }
+user = (req, res) => {
+  let { email } = Object.keys(req.query).length > 0 ? req.query : req.body;
+  return User.find({email})
+  .then(data => {
     return res.json({ success: true, data: data });
+  })
+  .catch(err => {
+    return res.json({ success: false, error: err });
   });
 };
 
 module.exports = {
-  data: res => data(res),
+  user: (req, res) => user(req, res),
 };
