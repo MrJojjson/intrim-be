@@ -21,5 +21,7 @@ module.exports = router => {
 
   /*VALIDATION*/
   router.post("/validateUser", (req, res) => validate.user(req, res));
+  router.post("/validateOrganisation", (req, res) => validate.organisation(req, res));
+
 }
 
