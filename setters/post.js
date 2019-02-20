@@ -1,6 +1,22 @@
 const url = require('url');
 
 const User = require("../models/user");
+const Organisation = require("../models/organisation");
+
+newOrganisation = (req, res) => {
+  const organisation = new Organisation();
+  Object.keys(req.body).map(key => {
+    return organisation[key] = req.body[key];
+  });
+  
+  organisation.save(err => {
+    console.log('inside save organisation');
+    if (err) {
+      return res.json({ success: false, error: err });
+    }
+    return res.json({ success: true });
+  });
+};
 
 newUser = (req, res) => {
   const user = new User();

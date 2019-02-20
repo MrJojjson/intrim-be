@@ -3,6 +3,9 @@ const get = require('../getters/get');
 const validate = require('../getters/validate');
 
 module.exports = router => {
+  router.post("/registrateNewOrganisation", (req, res) => {
+    return post.newOrganisation(req, res);
+  });
   router.post("/getUser", (req, res) => {
     return get.user(req, res);
   });

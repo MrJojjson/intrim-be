@@ -8,7 +8,7 @@ const OrganisationSchema = new Schema({
     required: true,
     unique: true
   },
-  organisation: {
+  name: {
     type: String,
     required: true,
     unique: false
@@ -23,11 +23,11 @@ const OrganisationSchema = new Schema({
 
 OrganisationSchema.pre('save', function (next) {
   var organisation = this;
-  bcrypt.hash(user.password, 10, function (err, hash){
+  bcrypt.hash(organisation.password, 10, function (err, hash){
     if (err) {
       return next(err);
     }
-    usorganisationer.password = hash;
+    organisation.password = hash;
     console.log('HASHED ORGANISATION PASS => ', organisation.password);
     return next();
   })
