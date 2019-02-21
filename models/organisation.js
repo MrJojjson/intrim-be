@@ -11,11 +11,13 @@ const OrganisationSchema = new Schema({
   name: {
     type: String,
     required: true,
-    unique: false
+    unique: true,
+    minlength: 2
   },
   password: {
     type: String,
     required: true,
+    minlength: 8
   },
 },
   { timestamps: true }
