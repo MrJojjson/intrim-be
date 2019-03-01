@@ -28,10 +28,10 @@ organisation = (req, res) => {
   const lowerId = id.toLowerCase();
 
   if (lowerId === 'password' && value.length < password.minlength) {
-    return res.json({ success: false, data: `Password needs to be at least ${password.minlength} characters long!` });
+    return res.json({ success: false, data: `Password needs to be at least ${password.minlength} characters long` });
   }
   if (lowerId === 'name' && value.length < name.minlength) {
-    return res.json({ success: false, data: `Organisation name needs to be at least ${name.minlength} characters long!` });
+    return res.json({ success: false, data: `Organisation name needs to be at least ${name.minlength} characters long` });
   }
 
   const validationObject = {[id]: value};
@@ -52,7 +52,7 @@ checkForIdAndValue = (id, value, res) => {
     return res.json({ success: false, data: `ERROR` });
   }
   if (!value) {
-    return res.json({ success: false, data: `Please add a value for: ${id}` });
+    return res.json({ success: false, data: 'Please add a value' });
   }
 }
 

@@ -35,22 +35,22 @@ app.use(session({
 
 app.use((req, res, next) => {
   // res.header("Access-Control-Allow-Origin", "*");
-  var allowedOrigins = [
-    'http://127.0.0.1:8081',
-    'http://localhost:8080',
-    'http://localhost:8080/registration',
-    'http://localhost:8080/profile',
-    'http://localhost:8080/api/profile',
-    'http://localhost:8080/api/registration',
-    'http://127.0.0.1:8081/api/loginUser'
-  ];
+  // var allowedOrigins = [
+  //   'http://127.0.0.1:8081',
+  //   'http://localhost:8080',
+  //   'http://localhost:8080/registration',
+  //   'http://localhost:8080/profile',
+  //   'http://localhost:8080/api/profile',
+  //   'http://localhost:8080/api/registration',
+  //   'http://127.0.0.1:8081/api/loginUser'
+  // ];
 
-  var origin = req.headers.origin;
-  console.log('origin', origin);
-  if(allowedOrigins.indexOf(origin) > -1){
-       res.header('Access-Control-Allow-Origin', origin);
-  }
-  res.header('Access-Control-Allow-Origin', origin);
+  // var origin = req.headers.origin;
+  // console.log('origin', origin);
+  // if(allowedOrigins.indexOf(origin) > -1){
+  //      res.header('Access-Control-Allow-Origin', origin);
+  // }
+  res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   res.header('Access-Control-Allow-Credentials', true);
