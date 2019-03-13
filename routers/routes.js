@@ -3,28 +3,28 @@ const get = require('../getters/get');
 const validate = require('../getters/validate');
 
 module.exports = router => {
-  router.post("/registrateNewOrganisation", (req, res) => {
+  router.post("/organisation/newOrganisation", (req, res) => {
     return post.newOrganisation(req, res);
   });
-  router.post("/getUser", (req, res) => {
+  router.post("/user/getUser", (req, res) => {
     return get.user(req, res);
   });
-  router.post("/registrateNewUser", (req, res) => {
+  router.post("/user/newUser", (req, res) => {
     return post.newUser(req, res);
   });
-  router.post("/loginUser", (req, res) => {
+  router.post("/user/login", (req, res) => {
     return post.loginUser(req, res);
   });
-  router.get('/logoutUser', (req, res, next) => {
+  router.get('/user/logout', (req, res, next) => {
     return post.logoutUser(req, res, next);
   });
-  router.get("/profile", (req, res) => {
+  router.get("/user/profile", (req, res) => {
     return get.user(req, res);
   });
 
   /*VALIDATION*/
-  router.post("/validateUser", (req, res) => validate.user(req, res));
-  router.post("/validateOrganisation", (req, res) => validate.organisation(req, res));
+  router.post("/validation/user", (req, res) => validate.user(req, res));
+  router.post("/validation/organisation", (req, res) => validate.organisation(req, res));
 
 }
 
